@@ -4,6 +4,9 @@ import {EyeIcon} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import { Author, Startup, StartupTypeCard} from '@/sanity.types';
+
+
 const StartupCard = ({post} : {post: StartupTypeCard}) => {
     return (
         <li className={"startup-card group"}>
@@ -27,17 +30,17 @@ const StartupCard = ({post} : {post: StartupTypeCard}) => {
                     </Link>
                 </div>
                 <Link href={`/user/${post.author?._id}`}>
-                    <Image src={"https://placehold.co/600x400"} alt={"avatar"} width={48} height={48} className={"rounded-full"}/>
+                    <img src={post.author?.image ?? ""} alt={"avatar"} width={48} height={48} className={"rounded-full "}/>
                 </Link>
             </div>
 
             <Link href={`/startup/${post._id}`}>
                 <p className={"startup-card_desc"}>{post.description}</p>
-                <img src={post.image} alt="placeholder" className={"startup-card_img"}/>
+                <img src={post.image ?? ""} alt="placeholder" className={"startup-card_img"}/>
             </Link>
 
             <div className={"flex-between gap-3 mt-5"}>
-                <Link href={`/?query=${post.category.toLowerCase()}`}>
+                <Link href={`/?query=${post.category?.toLowerCase()}`}>
                     <p className={"text-16-medium"}>{post.category}</p>
                 </Link>
                 <Button className={"startup-card_btn"}>

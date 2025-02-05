@@ -1,22 +1,17 @@
 import React from 'react'
 import SearchForm from "@/components/SearchForm";
 import StartupCard from "@/components/StartupCard";
+import { client } from '@/sanity/lib/client';
+import { STARTUPS_QUERY } from '@/sanity/lib/queries';
+import { StartupTypeCard } from '@/sanity.types';
+import { sanityFetch, SanityLive } from '@/lib/live';
 
 const Home = async ({searchParams} : {searchParams: Promise<{query? :string}>}) => {
     const query = (await searchParams).query;
-
-    const posts = [
-        {
-            _createdAt: new Date(),
-            views: "55",
-            author: {_id: 1, name: "Erdit"},
-            _id: 1,
-            description: "Description",
-            image: "https://media.istockphoto.com/id/1322104312/photo/freedom-chains-that-transform-into-birds-charge-concept.jpg?s=612x612&w=0&k=20&c=e2XUx498GotTLJn_62tPmsqj6vU48ZEkf0auXi6Ywh0=",
-            title: "Titulli i startupit",
-            category: "Tech"
-        }
-    ]
+    const params = {search: query || null};
+    // const posts = await client.fetch(STARTUPS_QUERY);
+    const {data: posts} = await sanityFetch({query: STARTUPS_QUERY, params}) // revalidates the page as soon as it gets new data
+    
 
     return (
         <>
@@ -36,14 +31,16 @@ const Home = async ({searchParams} : {searchParams: Promise<{query? :string}>}) 
             </p>
             <ul className={"mt-7 card_grid"}>
                 {posts.length > 0 ? (
-                    posts.map((post: StartupCardType) => (
-                        <StartupCard key={post} post={post}/>
+                    posts.map((post: StartupTypeCard) => (
+                        <StartupCard key={post._id} post={post}/>
                     ))
                 ) : (
                     <p className={"no-result"}>No startups found!</p>
                 )}
             </ul>
         </section>
+
+        <SanityLive />
         </>
     )
 }
