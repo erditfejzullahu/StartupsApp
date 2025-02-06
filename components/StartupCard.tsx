@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import { Author, Startup, StartupTypeCard} from '@/sanity.types';
+import { Skeleton } from './ui/skeleton';
 
 
 const StartupCard = ({post} : {post: StartupTypeCard}) => {
@@ -52,4 +53,13 @@ const StartupCard = ({post} : {post: StartupTypeCard}) => {
         </li>
     )
 }
+
+export const StatupCardSkeleton = () => {
+    {[0,1,2,3,4].map((item) => (
+        <li key={`skeleton-${item}`}>
+            <Skeleton className='!startup-card_skeleton'/>
+        </li>
+    ))}
+}
+
 export default StartupCard
