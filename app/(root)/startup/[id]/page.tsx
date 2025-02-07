@@ -1,6 +1,6 @@
 import { formatDate } from '@/lib/utils';
 import { client } from '@/sanity/lib/client'
-import { STARTUP_PITCH } from '@/sanity/lib/queries'
+import { PLAYLIST_BY_SLUG_QUERY, STARTUP_PITCH } from '@/sanity/lib/queries'
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,6 +8,8 @@ import React, { Suspense } from 'react'
 import markdownit from "markdown-it"
 import { Skeleton } from '@/components/ui/skeleton';
 import View from '@/components/View';
+import { StartupTypeCard } from '@/sanity.types';
+import StartupCard from '@/components/StartupCard';
 
 const md = markdownit();
 export const experimental_ppr = true;
@@ -15,25 +17,28 @@ export const experimental_ppr = true;
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
     const id = (await params).id
     const pitch = await client.fetch(STARTUP_PITCH, {id});
+
+    const {select: editorPost} = await client.fetch(PLAYLIST_BY_SLUG_QUERY, {slug: "most-voted-pitches"})
+    
     if(!pitch) return notFound();
 
     const parsedContent = md.render(pitch.pitch || "");
   return (
     <>
-        <section className="pink_container !min-h-[230px]">
+        <section className="pink_container !min-h-[230px] px-8 overflow-hidden">
             <p className="tag">{formatDate(pitch?._createdAt)}</p>
 
             <h1 className="heading">
                 {pitch.title}
             </h1>
-            <p className="sub-heading !max-w-5xl">{pitch.description}</p>
+            <p className="sub-heading !max-w-5xl !block !px-4">{pitch.description}</p>
         </section>
 
         <section className="section_container">
             <img src={pitch.image} alt="thumbnail" className="w-full h-auto rounded-xl" />
 
             <div className="space-y-5 mt-10 max-w-4xl mx-auto">
-                <div className="flex-between gap-5">
+                <div className="flex-between gap-5 flex-wrap">
                     <Link href={`/user/${pitch.author?._id}`} className="flex gap-2 items-center mb-3">
                         <Image 
                             src={pitch.author.image}
@@ -45,7 +50,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
                         <div>
                             <p className="text-20-medium">{pitch.author.name}</p>
-                            <p className="text-20-medium !text-black-300">${pitch.author.username}</p>
+                            <p className="text-20-medium !text-black-300">${pitch.author.username || pitch.author.name}</p>
                         </div>
                     </Link>
 
@@ -61,7 +66,17 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
             <hr className="divider"/>
 
-            {/* TODO: EDITOR SELECTED STARTUPS */}
+            {editorPost?.length > 0 && (
+                <div className="max-w-4xl mx-auto">
+                    <p className="text-30-semibold">Most Voted Startups</p>
+
+                    <ul className="mt-7 card_grid-sm">
+                        {editorPost.map((post: StartupTypeCard, i: number) => (
+                            <StartupCard key={i} post={post}/>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             <Suspense fallback={<Skeleton className="view_skeleton"/>}>
                 <View id={id}/>
