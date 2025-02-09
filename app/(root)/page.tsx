@@ -1,7 +1,6 @@
 import React from 'react'
 import SearchForm from "@/components/SearchForm";
 import StartupCard from "@/components/StartupCard";
-import { client } from '@/sanity/lib/client';
 import { STARTUPS_QUERY } from '@/sanity/lib/queries';
 import { StartupTypeCard } from '@/sanity.types';
 import { sanityFetch, SanityLive } from '@/lib/live';

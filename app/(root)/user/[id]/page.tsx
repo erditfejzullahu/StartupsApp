@@ -30,7 +30,7 @@ const page = async ({params} : {params: Promise<{id: string}>}) => {
                 className="profile_image"
             />
             <p className='text-30-extrabold mt-7 text-center'>
-                @{user?.username}
+                @{user?.username || user?.name}
             </p>
             <p className="mt-1 text-center text-14-normal">{user?.bio || "Still no bio"}</p>
         </div>
